@@ -1,0 +1,11 @@
+{
+  "name": "image_to_text",
+  "version": "1.0.0",
+  "description": "turn images to text and decide how can enter a parking lot",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
