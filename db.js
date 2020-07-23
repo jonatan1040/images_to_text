@@ -19,9 +19,9 @@ async function connectDb() {
     },
     function (err) {
       if (err) {
-        console.log("connection error: ", err);
+        console.log("DB connection error:\n ", err);
       } else {
-        console.log("connection successful");
+        console.log("DB connection successful");
       }
     }
   );
@@ -51,7 +51,8 @@ async function connectDb() {
   return cars;
 }
 
-async function saveToDb(car, cars, id) {
+async function saveToDb(car, cars) {
+  console.log("MYcars", cars);
   //construct documents with user mongoose modal
   const newCar = await new cars({
     number: car.licenseNumber,

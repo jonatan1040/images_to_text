@@ -64,8 +64,25 @@ app.post("/", async (req, res) => {
         data: data,
       };
 
+      let myCars = [];
+      function cloneObject(carObject) {
+        let clone = {};
+        for (let key in carObject) {
+          clone[key] = carObject[key];
+        }
+        myCars.push(clone);
+      }
+
+      let licensePlate = "";
+      let car = {
+        licenseNumber: licensePlate,
+        type: "",
+        prohibited: false,
+      };
+
       axios(config)
         .then(async function parking(response) {
+          let parking = false;
           //   check the file is valid format(image)
           assert.strictEqual(
             response.data.OCRExitCode,
@@ -83,16 +100,11 @@ app.post("/", async (req, res) => {
             );
             //file is valid format
             if (response.data.ParsedResults[0].FileParseExitCode === 1) {
-              let licensePlate = response.data.ParsedResults[0].ParsedText.replace(
+              licensePlate = response.data.ParsedResults[0].ParsedText.replace(
                 /[\s`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi,
                 ""
               );
-              let parking = false;
-              let car = {
-                licenseNumber: licensePlate,
-                type: "",
-                prohibited: false,
-              };
+              car.licenseNumber = licensePlate;
               console.log("licensePlate", licensePlate);
               console.log("licensePlate.length", licensePlate.length);
               // text was parsed but its empty string
@@ -126,18 +138,25 @@ app.post("/", async (req, res) => {
                   assert.notStrictEqual(sum, 0, "sum is zero");
                   //check if text is only numbers
                   if (/^[0-9]+$/.test(licensePlate)) {
+                    console.log("mycars1", myCars);
+
                     if (licensePlate.length == 7 || licensePlate.length == 8) {
+                      console.log("mycars2", myCars);
+
                       if (sum % 7 == 0) {
                         console.log("dbg");
                         parking = true;
                         car.prohibited = true;
                         car.type = "GAS";
-                        await db.saveToDb(car, cars, id);
+                        await db.saveToDb(car, cars);
+                        cloneObject(car);
                       } else {
                         console.log("err, not divided by 7");
                         car.prohibited = false;
                       }
                       if (licensePlate.length == 7) {
+                        console.log("mycars4", myCars);
+
                         if (
                           licensePlate.endsWith("85") ||
                           licensePlate.endsWith("86") ||
@@ -146,11 +165,14 @@ app.post("/", async (req, res) => {
                           licensePlate.endsWith("89") ||
                           licensePlate.endsWith("00")
                         ) {
+                          console.log("mycars5", myCars);
+
                           console.log("dbc");
                           parking = true;
                           car.prohibited = true;
                           car.type = "C";
-                          await db.saveToDb(car, cars, id);
+                          cloneObject(car);
+                          await db.saveToDb(car, cars);
                         }
                       } else {
                         console.log("err, not 7 in length");
@@ -168,7 +190,8 @@ app.post("/", async (req, res) => {
                       parking = true;
                       car.prohibited = true;
                       car.type = "Public transportation";
-                      await db.saveToDb(car, cars, id);
+                      cloneObject(car);
+                      await db.saveToDb(car, cars);
                     } else {
                       console.log("err, does not end with 25/26");
                       car.prohibited = false;
@@ -178,7 +201,8 @@ app.post("/", async (req, res) => {
                     parking = true;
                     car.prohibited = true;
                     car.type = "Military and law enforcement";
-                    await db.saveToDb(car, cars, id);
+                    cloneObject(car);
+                    await db.saveToDb(car, cars);
                     if (
                       licensePlate.endsWith("25") ||
                       licensePlate.endsWith("26")
@@ -187,7 +211,8 @@ app.post("/", async (req, res) => {
                       parking = true;
                       car.prohibited = true;
                       car.type = "Public transportation";
-                      await db.saveToDb(car, cars, id);
+                      cloneObject(car);
+                      await db.saveToDb(car, cars);
                     } else {
                       console.log("err, does not end with 25/26");
                       car.prohibited = false;
@@ -198,7 +223,8 @@ app.post("/", async (req, res) => {
                         parking = true;
                         car.prohibited = true;
                         car.type = "GAS";
-                        await db.saveToDb(car, cars, id);
+                        cloneObject(car);
+                        await db.saveToDb(car, cars);
                       } else {
                         console.log("err, not divided by 7");
                         car.prohibited = false;
@@ -216,7 +242,8 @@ app.post("/", async (req, res) => {
                           parking = true;
                           car.prohibited = true;
                           car.type = "C";
-                          await db.saveToDb(car, cars, id);
+                          cloneObject(car);
+                          await db.saveToDb(car, cars);
                         }
                       } else {
                         console.log("err, not 7 in length");
@@ -230,7 +257,8 @@ app.post("/", async (req, res) => {
                   if (parking === false) {
                     car.type =
                       "Car type is not Public transportation/Military and law enforcement/C/GAS";
-                    await db.saveToDb(car, cars, id);
+                    cloneObject(car);
+                    await db.saveToDb(car, cars);
                   }
                 }
               }
@@ -251,8 +279,14 @@ app.post("/", async (req, res) => {
             console.log("myErrorMessage", response.data.ErrorMessage);
             console.log("myErrorDetails", response.data.ErrorDetails);
           }
+          car.type = "";
+          car.prohibited = false;
+          console.log("this is all my cars:\n", myCars);
+          res.send(myCars);
+          myCars = [];
         })
         .catch(function (error) {
+          res.send("error", error);
           console.error("error", error);
         });
     }
