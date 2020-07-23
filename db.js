@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
-async function connectDb() {
-  // const encrypt = require("mongoose-encryption");
+const timeZone = require("mongoose-timezone");
 
+async function connectDb() {
   // Connection URL
   const url = "mongodb://localhost:27017";
 
@@ -29,8 +29,7 @@ async function connectDb() {
   //create a user mongoose schema
   const carsSchema = new mongoose.Schema(
     {
-      _id: Number,
-      //   _id: mongoose.Schema.ObjectId,
+      _id: { type: mongoose.Types.ObjectId, auto: true },
       number: String,
       carType: String,
       prohibited: Boolean,
@@ -39,11 +38,12 @@ async function connectDb() {
       timestamps: {
         createdAt: "created_at",
         updatedAt: "updated_at",
-        // type: Date,
-        // default: new Date(),
+        type: Date,
       },
     }
   );
+
+  carsSchema.plugin(timeZone);
 
   //create a user mongoose modal
   const cars = mongoose.model(cars_collection, carsSchema);
@@ -54,14 +54,10 @@ async function connectDb() {
 async function saveToDb(car, cars, id) {
   //construct documents with user mongoose modal
   const newCar = await new cars({
-    _id: Number,
     number: car.licenseNumber,
     carType: car.type,
     prohibited: car.prohibited,
   });
-
-  newCar._id = id;
-  console.log("newCar._id", newCar._id);
 
   //save the user document into mongodb
   await newCar.save(function (err, myNewCar) {
