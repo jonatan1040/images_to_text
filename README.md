@@ -22,11 +22,13 @@ images test list
 
 * 7 digits number is counted also letters (e.g: 13-40H-85, 12-40H-86)
 
-none
-P - Public transportation vehicles
-M - Military and law enforcement vehicles
-C - 7 digits numbers+ends with 85/86/87/88/89/00 vehicles
-G - GAS operated vehicles
+| Image No.        | Plate           |
+| ------------- |:-------------:|
+|none|
+|P  |Public transportation vehicles|
+|M  |Military and law enforcement vehicles|
+|C  |7 digits numbers+ends with 85/86/87/88/89/00 vehicles|
+|G  |GAS operated vehicles|
 
 | Image No.        | Plate           | Classification  |prohibited|
 | ------------- |:-------------:| -----:|-----:|
