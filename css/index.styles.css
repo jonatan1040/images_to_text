@@ -1,0 +1,17 @@
+h1, .inner_div {
+    margin-top: 50px;
+    margin-left: 50px;
+}
+
+.carType {
+    margin-left: 74px;
+}
+
+.button {
+    border: 1px solid gray;
+    background-color: #E4E4E4;
+    color: #333333;
+    padding: 4px;
+    border-radius: 4px;
+    text-decoration: none;
+}

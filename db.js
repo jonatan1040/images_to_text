@@ -52,7 +52,6 @@ async function connectDb() {
 }
 
 async function saveToDb(car, cars) {
-  console.log("MYcars", cars);
   //construct documents with user mongoose modal
   const newCar = await new cars({
     number: car.licenseNumber,
@@ -70,4 +69,18 @@ async function saveToDb(car, cars) {
   });
 }
 
-module.exports = { connectDb, saveToDb };
+async function findFromDb(cars, query) {
+  console.log("query", query);
+  // console.log("typeof query", typeof query);
+  let foundUser = await cars
+    .find(query)
+    .then((res) => {
+      console.log("res", res);
+      return res;
+    })
+    .catch((err) => console.log("err", err));
+  // console.log("foundUser", foundUser);
+  return foundUser;
+}
+
+module.exports = { connectDb, saveToDb, findFromDb };

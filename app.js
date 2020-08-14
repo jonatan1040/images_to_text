@@ -8,9 +8,11 @@ const FormData = require("form-data");
 const axios = require("axios");
 const path = require("path");
 const db = require("./db");
+const ejs = require("ejs");
 const assert = require("assert").strict;
 
 const app = express();
+app.use("/css", express.static(path.join(__dirname, "css")));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.set("view engine", "ejs");
@@ -138,11 +140,7 @@ app.post("/", async (req, res) => {
                   assert.notStrictEqual(sum, 0, "sum is zero");
                   //check if text is only numbers
                   if (/^[0-9]+$/.test(licensePlate)) {
-                    console.log("mycars1", myCars);
-
                     if (licensePlate.length == 7 || licensePlate.length == 8) {
-                      console.log("mycars2", myCars);
-
                       if (sum % 7 == 0) {
                         console.log("dbg");
                         parking = true;
@@ -155,8 +153,6 @@ app.post("/", async (req, res) => {
                         car.prohibited = false;
                       }
                       if (licensePlate.length == 7) {
-                        console.log("mycars4", myCars);
-
                         if (
                           licensePlate.endsWith("85") ||
                           licensePlate.endsWith("86") ||
@@ -165,8 +161,6 @@ app.post("/", async (req, res) => {
                           licensePlate.endsWith("89") ||
                           licensePlate.endsWith("00")
                         ) {
-                          console.log("mycars5", myCars);
-
                           console.log("dbc");
                           parking = true;
                           car.prohibited = true;
@@ -278,6 +272,7 @@ app.post("/", async (req, res) => {
             //file is not valid format
             console.log("myErrorMessage", response.data.ErrorMessage);
             console.log("myErrorDetails", response.data.ErrorDetails);
+            console.log("response.data.OCRExitCode", response.data.OCRExitCode);
           }
           car.type = "";
           car.prohibited = false;
@@ -286,7 +281,6 @@ app.post("/", async (req, res) => {
           myCars = [];
         })
         .catch(function (error) {
-          res.send("error", error);
           console.error("error", error);
         });
     }
@@ -294,6 +288,91 @@ app.post("/", async (req, res) => {
     res.status(500).send(err);
     console.error("err", err);
   }
+});
+
+app.get("/query", (req, res) => {
+  res.render("query");
+});
+
+app.post("/results", (req, res) => {
+  // console.log("number", req.body.number);
+  // console.log("carType", req.body.carType);
+  // console.log("prohibited", req.body.prohibited);
+  // console.log("created_at", req.body.created_at);
+  // console.log("updated_at", req.body.updated_at);
+  if (req.body.carType == undefined) {
+    req.body.carType = "";
+  }
+  if (req.body.prohibited == undefined) {
+    req.body.prohibited = "";
+  }
+  // if (req.body.created_at[0] == undefined) {
+  //   req.body.created_at[0] = "";
+  // }
+  // if (req.body.created_at[1] == undefined) {
+  //   req.body.created_at[1] = "";
+  // }
+  // if (req.body.updated_at[0] == undefined) {
+  //   req.body.updated_at[0] = "";
+  // }
+  // if (req.body.updated_at[1] == undefined) {
+  //   req.body.updated_at[1] = "";
+  // }
+
+  console.log("number", req.body.number);
+  console.log("carType", req.body.carType);
+  console.log("prohibited", req.body.prohibited);
+  console.log("created_at", req.body.createdAt);
+  console.log("updated_at", req.body.updated_at);
+
+  let query = {
+    number: req.body.number,
+    carType: req.body.carType,
+    prohibited: req.body.prohibited,
+    created_at: req.body.createdAt,
+    updated_at: req.body.updated_at,
+  };
+
+  // console.log("created_at[0] is:", query.created_at[0]);
+
+  for (property in query) {
+    console.log("property", property);
+    if (query[property] === "") {
+      delete query[property];
+    } else if (property === "created_at" || property === "updated_at") {
+      // console.log("query[property][0]", query[property][0]);
+      // console.log("typeof query[property][0]", typeof query[property][0]);
+      // console.log("query[property][1]", query[property][1]);
+      // console.log("typeof query[property][1]", typeof query[property][1]);
+      console.log("query1", query);
+      if (query[property][0] === "" && query[property][1] === "") {
+        delete query[property];
+        console.log("query2", query);
+      } else if (query[property][0] !== "" && query[property][1] === "") {
+        query[property] = { $gte: query[property][0] };
+        console.log("query3", query);
+        console.log("property1", property);
+      } else if (query[property][0] === "" && query[property][1] !== "") {
+        query[property] = { $lte: query[property][1] };
+        console.log("query4", query);
+        console.log("property2", property);
+      } else {
+        query[property] = {
+          $gte: query[property][0],
+          $lte: query[property][1],
+        };
+        console.log("query5", query);
+        console.log("property3", property);
+      }
+    }
+    console.log("query6", query);
+  }
+
+  (async function () {
+    let results = await db.findFromDb(cars, query);
+    // console.log("results", results);
+    res.render("results", { results });
+  })();
 });
 
 app.listen(port, () => {

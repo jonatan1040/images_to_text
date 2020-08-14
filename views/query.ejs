@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/query.styles.css" />
+    <title>Query</title>
+  </head>
+  <body>
+    <h1>Query DB</h1>
+    <div class="inner_div">
+      <form action="/results" method="POST">
+        <label for="number">license Plate Number:</label>
+        <input
+          type="number"
+          placeholder="EX: 1030189 "
+          name="number"
+        /><br /><br />
+        <label for="carType">Car Type: </label>
+        <div class="carType">
+          <input type="checkbox" name="carType" value="Public transportation" />
+          <label for="carType">Public transportation</label><br /><br />
+        </div>
+        <div class="carType">
+          <input
+            type="checkbox"
+            name="carType"
+            value="Military and law enforcement"
+          />
+          <label for="carType">Military and law enforcement</label><br /><br />
+        </div>
+        <div class="carType">
+          <input type="checkbox" name="carType" value="C" />
+          <label for="carType">C</label><br /><br />
+        </div>
+        <div class="carType">
+          <input type="checkbox" name="carType" value="GAS" />
+          <label for="carType">GAS</label><br /><br />
+        </div>
+        <div class="carType">
+          <input
+            type="checkbox"
+            name="carType"
+            value="Car type is not Public transportation/Military and law enforcement/C/GAS"
+          />
+          <label for="carType"
+            >Car type is not Public transportation/Military and law
+            enforcement/C/GAS</label
+          ><br /><br />
+        </div>
+        <label for="prohibited">Prohibited: </label>
+        <input type="radio" name="prohibited" value="true" />
+        <label for="prohibited">Yes</label>
+        <input type="radio" name="prohibited" value="false" />
+        <label for="prohibited">No</label><br /><br />
+        <label for="createdAt">Created_at: </label>
+        <label for="createdAt">from: </label>
+        <input
+          type="date"
+          name="createdAt"
+          placeholder="EX: false "
+          min="1948-01-01"
+          max="3000-12-31"
+        /><label for="createdAt"> to: </label>
+        <input
+          type="date"
+          name="createdAt"
+          placeholder="EX: false "
+          min="1948-01-01"
+          max="3000-12-31"
+        />
+        <br /><br />
+        <label for="updated_at">Updated_at: </label>
+        <label for="updated_at">from: </label>
+        <input
+          type="date"
+          name="updated_at"
+          placeholder="EX: false "
+          min="1948-01-01"
+          max="3000-12-31"
+        /><label for="updated_at"> to: </label>
+        <input
+          type="date"
+          name="updated_at"
+          placeholder="EX: false "
+          min="1948-01-01"
+          max="3000-12-31"
+        />
+        <br /><br />
+        <input type="submit" value="Query!" />
+      </form>
+    </div>
+  </body>
+</html>

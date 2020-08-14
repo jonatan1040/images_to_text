@@ -3,13 +3,21 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/index.styles.css" />
     <title>image to text</title>
   </head>
   <body>
-    <h1>Upload Image</h1>
-    <form action="/" method="POST" enctype="multipart/form-data">
-      <input type="file" name="filename" />
-      <input type="submit" value="Upload!" />
-    </form>
+    <div>
+      <h1>Upload Image</h1>
+      <div class="inner_div">
+        <form action="/" method="POST" enctype="multipart/form-data">
+          <input type="file" name="filename" />
+          <input type="submit" value="Upload!" />
+        </form>
+      </div>
+      <div class="inner_div">
+        <a class="button" href="/query">Go to Query</a>
+      </div>
+    </div>
   </body>
 </html>
