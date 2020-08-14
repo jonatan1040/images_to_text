@@ -295,35 +295,12 @@ app.get("/query", (req, res) => {
 });
 
 app.post("/results", (req, res) => {
-  // console.log("number", req.body.number);
-  // console.log("carType", req.body.carType);
-  // console.log("prohibited", req.body.prohibited);
-  // console.log("created_at", req.body.created_at);
-  // console.log("updated_at", req.body.updated_at);
   if (req.body.carType == undefined) {
     req.body.carType = "";
   }
   if (req.body.prohibited == undefined) {
     req.body.prohibited = "";
   }
-  // if (req.body.created_at[0] == undefined) {
-  //   req.body.created_at[0] = "";
-  // }
-  // if (req.body.created_at[1] == undefined) {
-  //   req.body.created_at[1] = "";
-  // }
-  // if (req.body.updated_at[0] == undefined) {
-  //   req.body.updated_at[0] = "";
-  // }
-  // if (req.body.updated_at[1] == undefined) {
-  //   req.body.updated_at[1] = "";
-  // }
-
-  console.log("number", req.body.number);
-  console.log("carType", req.body.carType);
-  console.log("prohibited", req.body.prohibited);
-  console.log("created_at", req.body.createdAt);
-  console.log("updated_at", req.body.updated_at);
 
   let query = {
     number: req.body.number,
@@ -333,44 +310,27 @@ app.post("/results", (req, res) => {
     updated_at: req.body.updated_at,
   };
 
-  // console.log("created_at[0] is:", query.created_at[0]);
-
   for (property in query) {
-    console.log("property", property);
     if (query[property] === "") {
       delete query[property];
     } else if (property === "created_at" || property === "updated_at") {
-      // console.log("query[property][0]", query[property][0]);
-      // console.log("typeof query[property][0]", typeof query[property][0]);
-      // console.log("query[property][1]", query[property][1]);
-      // console.log("typeof query[property][1]", typeof query[property][1]);
-      console.log("query1", query);
       if (query[property][0] === "" && query[property][1] === "") {
         delete query[property];
-        console.log("query2", query);
       } else if (query[property][0] !== "" && query[property][1] === "") {
-        query[property] = { $gte: query[property][0] };
-        console.log("query3", query);
-        console.log("property1", property);
+        query[property] = { $gte: query[property][0] + "+00:00" };
       } else if (query[property][0] === "" && query[property][1] !== "") {
-        query[property] = { $lte: query[property][1] };
-        console.log("query4", query);
-        console.log("property2", property);
+        query[property] = { $lte: query[property][1] + "+00:00" };
       } else {
         query[property] = {
-          $gte: query[property][0],
-          $lte: query[property][1],
+          $gte: query[property][0] + "+00:00",
+          $lte: query[property][1] + "+00:00",
         };
-        console.log("query5", query);
-        console.log("property3", property);
       }
     }
-    console.log("query6", query);
   }
 
   (async function () {
     let results = await db.findFromDb(cars, query);
-    // console.log("results", results);
     res.render("results", { results });
   })();
 });

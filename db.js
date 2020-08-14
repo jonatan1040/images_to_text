@@ -70,8 +70,6 @@ async function saveToDb(car, cars) {
 }
 
 async function findFromDb(cars, query) {
-  console.log("query", query);
-  // console.log("typeof query", typeof query);
   let foundUser = await cars
     .find(query)
     .then((res) => {
@@ -79,7 +77,6 @@ async function findFromDb(cars, query) {
       return res;
     })
     .catch((err) => console.log("err", err));
-  // console.log("foundUser", foundUser);
   return foundUser;
 }
 
